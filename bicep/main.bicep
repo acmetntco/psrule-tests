@@ -70,25 +70,23 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
         '10.200.0.0/23'
       ]
     }
-  }
-}
-
-resource vmSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = {
-  parent: virtualNetwork
-  name: 'vmSubnet'
-  properties: {
-    addressPrefix: '10.200.0.0/26'
-    networkSecurityGroup: {
-      id: vmNsg.id
-    }
-  }
-}
-
-resource bastionSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = {
-  parent: virtualNetwork
-  name: 'AzureBastionSubnet'
-  properties: {
-    addressPrefix: '10.200.0.64/26'
+    subnets: [
+      {
+        name: 'AzureBastionSubnet'
+        properties: {
+          addressPrefix: '10.200.0.64/26'
+        }
+      }
+      {
+        name: 'vmSubnet'
+        properties: {
+          addressPrefix: '10.200.0.0/26'
+          networkSecurityGroup: {
+            id: vmNsg.id
+          }
+        }
+      }
+    ]
   }
 }
 
@@ -104,7 +102,7 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = {
             id: vmPublicIP.id
           }
           subnet: {
-            id: bastionSubnet.id
+            id: '${virtualNetwork.id}/subnets/AzureBastionSubnet'
           }
         }
       }
@@ -122,7 +120,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: vmSubnet.id
+            id: '${virtualNetwork.id}/subnets/vmSubnet'
           }
           publicIPAddress: {
             id: vmPublicIP.id
