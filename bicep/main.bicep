@@ -1,4 +1,6 @@
 param adminuser string = 'atcadmin'
+@secure()
+param adminpass string
 
 resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
   name: 'atcmineserv-nsg'
@@ -131,11 +133,6 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-05-01' = {
   }
 }
 
-resource sshPublicKey 'Microsoft.Compute/sshPublicKeys@2024-07-01' = {
-  name: 'atcmineserv-sshkey'
-  location: 'australiaeast'
-}
-
 resource atcmineserv 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: 'atcmineserv01'
   location: 'australiaeast'
@@ -172,16 +169,8 @@ resource atcmineserv 'Microsoft.Compute/virtualMachines@2024-07-01' = {
     osProfile: {
       computerName: 'atcmineserv01'
       adminUsername: adminuser
+      adminPassword: adminpass
       linuxConfiguration: {
-        disablePasswordAuthentication: true
-        ssh: {
-          publicKeys: [
-            {
-              path: '/home/atcadmin/.ssh/authorized_keys'
-              keyData: sshPublicKey.properties.publicKey
-            }
-          ]
-        }
         provisionVMAgent: true
         patchSettings: {
           patchMode: 'ImageDefault'
