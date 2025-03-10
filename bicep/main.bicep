@@ -40,6 +40,10 @@ resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
 resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   name: 'atcmineserv-pip'
   location: 'australiaeast'
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     idleTimeoutInMinutes: 4
@@ -49,9 +53,13 @@ resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   }
 }
 
-resource BastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
+resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   name: 'atcbastion-pip'
   location: 'australiaeast'
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     idleTimeoutInMinutes: 4
@@ -99,7 +107,7 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = {
         name: 'bastionIpConfig'
         properties: {
           publicIPAddress: {
-            id: vmPublicIP.id
+            id: bastionPublicIP.id
           }
           subnet: {
             id: '${virtualNetwork.id}/subnets/AzureBastionSubnet'
@@ -177,7 +185,6 @@ resource atcmineserv 'Microsoft.Compute/virtualMachines@2024-07-01' = {
       }
       secrets: []
       allowExtensionOperations: true
-      requireGuestProvisionSignal: true
     }
     networkProfile: {
       networkInterfaces: [
