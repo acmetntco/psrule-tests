@@ -1,10 +1,14 @@
 # psrule-tests
 
-A simple Azure VM deployment using Bicep templates and GitHub Actions for continuous deployment.
+A simple Azure VM deployment using Bicep templates and GitHub Actions for continuous deployment. This branch will also run [PSRule for Azure](https://github.com/Azure/PSRule.Rules.Azure) across the templated resources to ensure adherance to Azure Well Architected Framework. 
 
 ## Overview
 
 This repository contains a Bicep template to deploy an Azure Virtual Machine along with associated resources such as a Network Security Group, Public IP addresses, Virtual Network, Bastion Host, Network Interface, and a Storage Account. The deployment is automated using GitHub Actions.
+
+## PSRule for Azure
+
+[PSRule for Azure](https://github.com/Azure/PSRule.Rules.Azure) is a set of rules to validate Azure resources against best practices and the Azure Well-Architected Framework. It helps ensure that your Azure resources are compliant with recommended practices. The PSRule GitHub Actions workflow runs PSRule for Azure to analyze the Bicep template and ensure it adheres to best practices. This workflow is triggered on every push to the `psrule` branch and can also be manually triggered. It will run PSRule to analyze the Bicep template and generate a report.
 
 ## Resources Deployed
 

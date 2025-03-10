@@ -1,0 +1,19 @@
+name: Analyze templates
+on:
+  push:
+    branches: ["psrule"]
+jobs:
+  analyze_arm:
+    name: Analyze templates
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Run PSRule
+      - name: Analyze with PSRule
+        uses: microsoft/ps-rule@v3.0.0
+        with:
+          modules: PSRule.Rules.Azure
