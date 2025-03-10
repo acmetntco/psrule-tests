@@ -45,7 +45,7 @@ resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
     tier: 'Regional'
   }
   properties: {
-    publicIPAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Static'
     idleTimeoutInMinutes: 4
     dnsSettings: {
       domainNameLabel: 'atcmineserv'
@@ -61,7 +61,7 @@ resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
     tier: 'Regional'
   }
   properties: {
-    publicIPAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Static'
     idleTimeoutInMinutes: 4
     dnsSettings: {
       domainNameLabel: 'atcbastion'
