@@ -1,0 +1,20 @@
+---
+# Synopsis: Ignore NSG lateral movement for management subnet NSGs such as Azure Bastion.
+apiVersion: github.com/microsoft/PSRule/v1
+kind: SuppressionGroup
+metadata:
+  name: Org.Azure.PermitOutboundManagement
+spec:
+  rule:
+  - PSRule.Rules.Azure\Azure.NSG.LateralTraversal
+  if:
+    allOf:
+    - type: '.'
+      in:
+      - Microsoft.Network/networkSecurityGroups
+
+    # Suppress NSGs with bastion or management in thier name
+    - name: '.'
+      contains:
+      - bastion
+      - management

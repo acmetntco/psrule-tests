@@ -10,6 +10,17 @@ This repository contains a Bicep template to deploy an Azure Virtual Machine alo
 
 [PSRule for Azure](https://github.com/Azure/PSRule.Rules.Azure) is a set of rules to validate Azure resources against best practices and the Azure Well-Architected Framework. It helps ensure that your Azure resources are compliant with recommended practices. The PSRule GitHub Actions workflow runs PSRule for Azure to analyze the Bicep template and ensure it adheres to best practices. This workflow is triggered on every push to the `psrule` branch and can also be manually triggered. It will run PSRule to analyze the Bicep template and generate a report.
 
+The following rules from PSRule for Azure are current set to except with cybersecurity exception SC23459876
+  - Azure.VM.UseHybridUseBenefit
+  - Azure.VM.Standalone
+  - Azure.VM.PublicIPAttached
+  - Azure.VM.PublicKey
+  - Azure.VM.AMA
+  - Azure.VM.MaintenanceConfig
+  - Azure.Storage.UseReplication
+  - Azure.Storage.SoftDelete
+  - Azure.Storage.ContainerSoftDelete
+
 ## Resources Deployed
 
 The Bicep template deploys the following resources:
@@ -24,6 +35,13 @@ The Bicep template deploys the following resources:
 - **Virtual Machine** (`Microsoft.Compute/virtualMachines`)
 - **Storage Account** (`Microsoft.Storage/storageAccounts`)
 - **Role Assignment** (`Microsoft.Authorization/roleAssignments`)
+
+All resources are deployed with the following attached tags -
+
+- **application**
+- **environment**
+- **owner**
+- **costcenter**
 
 ## Prerequisites
 

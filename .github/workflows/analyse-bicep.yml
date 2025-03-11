@@ -1,7 +1,7 @@
 name: Analyze templates
 on:
   push:
-    branches: ["psrule"]
+    branches: ["psrule", "psrulefixed"]
 jobs:
   analyze_arm:
     name: Analyze templates

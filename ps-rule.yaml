@@ -9,3 +9,16 @@ input:
   pathIgnore:
   # Exclude module files
   - '.github/**'
+
+rule:
+  exclude:
+  # Ignore the following rules for all resources
+  - Azure.VM.UseHybridUseBenefit
+  - Azure.VM.Standalone
+  - Azure.VM.PublicIPAttached
+  - Azure.VM.PublicKey
+  - Azure.VM.AMA
+  - Azure.VM.MaintenanceConfig
+  - Azure.Storage.UseReplication
+  - Azure.Storage.SoftDelete
+  - Azure.Storage.ContainerSoftDelete

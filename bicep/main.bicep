@@ -5,6 +5,12 @@ param adminpass string
 resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
   name: 'atcmineserv-nsg'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   properties: {
     securityRules: [
       {
@@ -13,7 +19,7 @@ resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '25565'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: '40.126.226.174/32'
           destinationAddressPrefix: '10.200.0.0/26'
           access: 'Allow'
           priority: 1010
@@ -33,6 +39,50 @@ resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
           direction: 'Inbound'
         }
       }
+      { 
+        name: 'Deny-Hop-Outbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRanges: [
+            '3389'
+            '22'
+          ]
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationAddressPrefix: '*'
+          access: 'Deny'
+          priority: 10000
+          direction: 'Outbound'
+        }
+      }
+    ]
+  }
+}
+
+resource bastionNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
+  name: 'atcmineserv-bastion-nsg'
+  location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
+  properties: {
+    securityRules: [
+      {
+        name: 'AllowBastionSSH'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '22'
+          sourceAddressPrefix: '10.200.0.64/26'
+          destinationAddressPrefix: '10.200.0.0/26'
+          access: 'Allow'
+          priority: 1000
+          direction: 'Outbound'
+        }
+      }
     ]
   }
 }
@@ -40,10 +90,21 @@ resource vmNsg 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
 resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   name: 'atcmineserv-pip'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   sku: {
     name: 'Standard'
     tier: 'Regional'
   }
+  zones: [
+    '1'
+    '2'
+    '3'
+  ]
   properties: {
     publicIPAllocationMethod: 'Static'
     idleTimeoutInMinutes: 4
@@ -56,6 +117,13 @@ resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
 resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   name: 'atcbastion-pip'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+    resourceType: 'azure-bastion'
+  }
   sku: {
     name: 'Standard'
     tier: 'Regional'
@@ -72,6 +140,12 @@ resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: 'atcmineserv-vnet'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -83,6 +157,9 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
         name: 'AzureBastionSubnet'
         properties: {
           addressPrefix: '10.200.0.64/26'
+          networkSecurityGroup: {
+            id: bastionNsg.id
+          }
         }
       }
       {
@@ -101,6 +178,12 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
 resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = {
   name: 'atcmineserv-bastion'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   properties: {
     ipConfigurations: [
       {
@@ -121,6 +204,12 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = {
 resource networkInterface 'Microsoft.Network/networkInterfaces@2023-05-01' = {
   name: 'atcmineserv01-nic'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   properties: {
     ipConfigurations: [
       {
@@ -142,6 +231,12 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2023-05-01' = {
 resource atcmineserv 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: 'atcmineserv01'
   location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   identity: {
     type: 'SystemAssigned'
   }
@@ -200,13 +295,18 @@ resource atcmineserv 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 }
 
 resource atcmineservstorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: 'atcmineservbackup98689'
+  location: 'australiaeast'
+  tags: {
+    application: 'atcmineserv'
+    environment: 'production'
+    owner: 'atcadmin'
+    costcenter: '123456'
+  }
   sku: {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
-  name: 'atcmineservbackup98689'
-  location: 'australiaeast'
-  tags: {}
   properties: {
     dnsEndpointType: 'Standard'
     allowedCopyScope: 'AAD'
@@ -218,9 +318,9 @@ resource atcmineservstorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     allowSharedKeyAccess: true
     networkAcls: {
       bypass: 'AzureServices'
-      defaultAction: 'Allow'
+      defaultAction: 'Deny'
     }
-    supportsHttpsTrafficOnly: false
+    supportsHttpsTrafficOnly: true
     encryption: {
       requireInfrastructureEncryption: false
       services: {
