@@ -22,3 +22,5 @@ rule:
   - Azure.Storage.UseReplication
   - Azure.Storage.SoftDelete
   - Azure.Storage.ContainerSoftDelete
+  - Azure.NSG.LateralTraversal
+  - Azure.PublicIP.AvailabilityZone
