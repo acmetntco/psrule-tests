@@ -18,3 +18,16 @@ spec:
       contains:
       - bastion
       - management
+  rule:
+  - PSRule.Rules.Azure\Azure.PublicIP.AvailabilityZone
+  if:
+    allOf:
+    - type: '.'
+      in:
+      - Microsoft.Network/publicIPAddresses
+
+    # Suppress NSGs with bastion or management in thier name
+    - name: '.'
+      contains:
+      - bastion
+      - management

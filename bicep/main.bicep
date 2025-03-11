@@ -115,7 +115,7 @@ resource vmPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
 }
 
 resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
-  name: 'atcbastion-pip'
+  name: 'atc-bastion-pip'
   location: 'australiaeast'
   tags: {
     application: 'atcmineserv'
